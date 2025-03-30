@@ -17,7 +17,7 @@ import (
 
 // unitSuffixes are suffixes sometimes applied to the width and height attributes
 // of the svg element.
-var unitSuffixes = []string{"cm", "mm", "px", "pt"}
+var unitSuffixes = [...]string{"cm", "mm", "px", "pt"}
 
 func parseColorValue(v string) (uint8, error) {
 	if v[len(v)-1] == '%' {
