@@ -17,7 +17,7 @@ type PathStyle struct {
 	LineWidth, DashOffset, MiterLimit float64
 	Dash                              []float64
 	UseNonZeroWinding                 bool
-	fillerColor, linerColor           interface{} // either color.Color or rasterx.Gradient
+	fillerColor, linerColor           any // either color.Color or rasterx.Gradient
 	LineGap                           rasterx.GapFunc
 	LeadLineCap                       rasterx.CapFunc // This is used if different than LineCap
 	LineCap                           rasterx.CapFunc
