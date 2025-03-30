@@ -31,7 +31,7 @@ type IconCursor struct {
 // Since the context of the gradient can affect the colors
 // the current fill or line color is passed in and used in
 // the case of a nil stopClor value
-func (c *IconCursor) ReadGradURL(v string, defaultColor interface{}) (grad rasterx.Gradient, ok bool) {
+func (c *IconCursor) ReadGradURL(v string, defaultColor any) (grad rasterx.Gradient, ok bool) {
 	if strings.HasPrefix(v, "url(") && strings.HasSuffix(v, ")") {
 		urlStr := strings.TrimSpace(v[4 : len(v)-1])
 		if strings.HasPrefix(urlStr, "#") {
@@ -354,9 +354,9 @@ func (c *IconCursor) readStartElement(se xml.StartElement) (err error) {
 	if err != nil {
 		e := fmt.Sprintf("error during processing svg element %s: %s", se.Name.Local, err.Error())
 		if c.returnError(e) {
-			err = errors.New(e)
+			return errors.New(e)
 		}
-		err = nil
+		return nil
 	}
 
 	if len(c.Path) > 0 {

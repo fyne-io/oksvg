@@ -17,7 +17,7 @@ import (
 
 // unitSuffixes are suffixes sometimes applied to the width and height attributes
 // of the svg element.
-var unitSuffixes = []string{"cm", "mm", "px", "pt"}
+var unitSuffixes = [...]string{"cm", "mm", "px", "pt"}
 
 func parseColorValue(v string) (uint8, error) {
 	if v[len(v)-1] == '%' {
@@ -134,7 +134,7 @@ func readFraction(v string) (f float64, err error) {
 
 // getColor is a helper function to get the background color
 // if ReadGradUrl needs it.
-func getColor(clr interface{}) color.Color {
+func getColor(clr any) color.Color {
 	switch c := clr.(type) {
 	case rasterx.Gradient: // This is a bit lazy but oh well
 		for _, s := range c.Stops {
@@ -148,7 +148,7 @@ func getColor(clr interface{}) color.Color {
 	return colornames.Black
 }
 
-func localizeGradIfStopClrNil(g *rasterx.Gradient, defaultColor interface{}) (grad rasterx.Gradient) {
+func localizeGradIfStopClrNil(g *rasterx.Gradient, defaultColor any) (grad rasterx.Gradient) {
 	grad = *g
 	for _, s := range grad.Stops {
 		if s.StopColor == nil { // This means we need copy the gradient's Stop slice
