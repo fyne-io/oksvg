@@ -6,7 +6,7 @@ Although many SVG elements will not be read by oksvg, it is good enough to faith
 The package can be installed by running:
 
 ```
-go get github.com/fyne-io/oksvg
+go get github.com/fyne-io/oksvg@latest
 ```
 
 
