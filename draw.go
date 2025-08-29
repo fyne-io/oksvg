@@ -230,24 +230,24 @@ func drawPath(c *IconCursor, attrs []xml.Attr) error {
 	return nil
 }
 
-func drawDesc(c *IconCursor, attrs []xml.Attr) error {
+func drawDesc(c *IconCursor, _ []xml.Attr) error {
 	c.inDescText = true
 	c.icon.Descriptions = append(c.icon.Descriptions, "")
 	return nil
 }
 
-func drawTitle(c *IconCursor, attrs []xml.Attr) error {
+func drawTitle(c *IconCursor, _ []xml.Attr) error {
 	c.inTitleText = true
 	c.icon.Titles = append(c.icon.Titles, "")
 	return nil
 }
 
-func drawDefs(c *IconCursor, attrs []xml.Attr) error {
+func drawDefs(c *IconCursor, _ []xml.Attr) error {
 	c.inDefs = true
 	return nil
 }
 
-func drawStyle(c *IconCursor, attrs []xml.Attr) error {
+func drawStyle(c *IconCursor, _ []xml.Attr) error {
 	c.inDefsStyle = true
 	return nil
 }
