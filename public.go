@@ -144,34 +144,30 @@ func ReadIcon(iconFile string, errMode ...ErrorMode) (*SvgIcon, error) {
 // ParseSVGColorNum reads the SFG color string e.g. #FBD9BD
 func ParseSVGColorNum(colorStr string) (r, g, b uint8, err error) {
 	colorStr = strings.TrimPrefix(colorStr, "#")
-	var t uint64
-	if len(colorStr) != 6 {
-		if len(colorStr) != 3 {
-			err = fmt.Errorf("color string %s is not length 3 or 6 as required by SVG specification",
-				colorStr)
-			return
-		}
+	if len(colorStr) != 6 && len(colorStr) != 3 {
+		return 0, 0, 0, fmt.Errorf("color string %s is not length 3 or 6 as required by SVG specification",
+			colorStr)
+	} else if len(colorStr) == 3 {
 		// SVG specs say duplicate characters in case of 3 digit hex number
 		colorStr = string([]byte{
 			colorStr[0], colorStr[0],
 			colorStr[1], colorStr[1], colorStr[2], colorStr[2],
 		})
 	}
-	for _, v := range []struct {
-		c *uint8
-		s string
-	}{
-		{&r, colorStr[0:2]},
-		{&g, colorStr[2:4]},
-		{&b, colorStr[4:6]},
-	} {
-		t, err = strconv.ParseUint(v.s, 16, 8)
-		if err != nil {
-			return
-		}
-		*v.c = uint8(t)
+
+	rc, err := strconv.ParseUint(colorStr[0:2], 16, 8)
+	if err != nil {
+		return 0, 0, 0, err
 	}
-	return
+	gc, err := strconv.ParseUint(colorStr[2:4], 16, 8)
+	if err != nil {
+		return 0, 0, 0, err
+	}
+	bc, err := strconv.ParseUint(colorStr[4:6], 16, 8)
+	if err != nil {
+		return 0, 0, 0, err
+	}
+	return uint8(rc), uint8(gc), uint8(bc), nil
 }
 
 // ParseSVGColor parses an SVG color string in all forms
