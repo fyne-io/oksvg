@@ -53,7 +53,7 @@ func draw(name string, c *IconCursor, attrs []xml.Attr) error {
 	case "use":
 		return drawUse(c, attrs)
 	default:
-		return fmt.Errorf("Cannot process svg element %s", name)
+		return fmt.Errorf("cannot process svg element %s", name)
 	}
 }
 
