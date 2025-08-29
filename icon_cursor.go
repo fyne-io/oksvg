@@ -7,8 +7,6 @@ package oksvg
 
 import (
 	"encoding/xml"
-	"errors"
-	"fmt"
 	"image/color"
 	"log"
 	"math"
@@ -343,19 +341,10 @@ func (c *IconCursor) readStartElement(se xml.StartElement) (err error) {
 		})
 		return nil
 	}
-	df := getDrawFunc(se.Name.Local)
-	if df == nil {
-		errStr := "Cannot process svg element " + se.Name.Local
-		if c.returnError(errStr) {
-			return errors.New(errStr)
-		}
-		return nil
-	}
-	err = df(c, se.Attr)
+	err = draw(se.Name.Local, c, se.Attr)
 	if err != nil {
-		e := fmt.Sprintf("error during processing svg element %s: %s", se.Name.Local, err.Error())
-		if c.returnError(e) {
-			return errors.New(e)
+		if c.returnError(err.Error()) {
+			return err
 		}
 		return nil
 	}

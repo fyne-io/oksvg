@@ -8,6 +8,7 @@ package oksvg
 import (
 	"encoding/xml"
 	"errors"
+	"fmt"
 	"log"
 	"strings"
 
@@ -15,48 +16,48 @@ import (
 	"golang.org/x/image/math/fixed"
 )
 
-func getDrawFunc(name string) func(c *IconCursor, attrs []xml.Attr) error {
+func draw(name string, c *IconCursor, attrs []xml.Attr) error {
 	switch name {
 	case "svg":
-		return svgF
+		return drawSvg(c, attrs)
 	case "g":
-		return gF
+		return drawG(c, attrs)
 	case "line":
-		return lineF
+		return drawLine(c, attrs)
 	case "stop":
-		return stopF
+		return drawStop(c, attrs)
 	case "rect":
-		return rectF
+		return drawRect(c, attrs)
 	case "circle":
-		return circleF
+		return drawCircle(c, attrs)
 	case "ellipse":
-		return circleF // circleF handles ellipse also
+		return drawCircle(c, attrs) // circleF handles ellipse also
 	case "polyline":
-		return polylineF
+		return drawPolyline(c, attrs)
 	case "polygon":
-		return polygonF
+		return drawPolygon(c, attrs)
 	case "path":
-		return pathF
+		return drawPath(c, attrs)
 	case "desc":
-		return descF
+		return drawDesc(c, attrs)
 	case "defs":
-		return defsF
+		return drawDefs(c, attrs)
 	case "style":
-		return styleF
+		return drawStyle(c, attrs)
 	case "title":
-		return titleF
+		return drawTitle(c, attrs)
 	case "linearGradient":
-		return linearGradientF
+		return drawLinearGradient(c, attrs)
 	case "radialGradient":
-		return radialGradientF
+		return drawRadialGradient(c, attrs)
 	case "use":
-		return useF
+		return drawUse(c, attrs)
 	default:
-		return nil
+		return fmt.Errorf("Cannot process svg element %s", name)
 	}
 }
 
-func svgF(c *IconCursor, attrs []xml.Attr) error {
+func drawSvg(c *IconCursor, attrs []xml.Attr) error {
 	c.icon.ViewBox.X = 0
 	c.icon.ViewBox.Y = 0
 	c.icon.ViewBox.W = 0
@@ -91,8 +92,8 @@ func svgF(c *IconCursor, attrs []xml.Attr) error {
 	}
 	return nil
 }
-func gF(*IconCursor, []xml.Attr) error { return nil } // g does nothing but push the style
-func rectF(c *IconCursor, attrs []xml.Attr) error {
+func drawG(*IconCursor, []xml.Attr) error { return nil } // g does nothing but push the style
+func drawRect(c *IconCursor, attrs []xml.Attr) error {
 	var x, y, w, h, rx, ry float64
 	var err error
 	for _, attr := range attrs {
@@ -121,7 +122,7 @@ func rectF(c *IconCursor, attrs []xml.Attr) error {
 	return nil
 }
 
-func circleF(c *IconCursor, attrs []xml.Attr) error {
+func drawCircle(c *IconCursor, attrs []xml.Attr) error {
 	var cx, cy, rx, ry float64
 	var err error
 	for _, attr := range attrs {
@@ -149,7 +150,7 @@ func circleF(c *IconCursor, attrs []xml.Attr) error {
 	return nil
 }
 
-func lineF(c *IconCursor, attrs []xml.Attr) error {
+func drawLine(c *IconCursor, attrs []xml.Attr) error {
 	var x1, x2, y1, y2 float64
 	var err error
 	for _, attr := range attrs {
@@ -178,7 +179,7 @@ func lineF(c *IconCursor, attrs []xml.Attr) error {
 	return nil
 }
 
-func polylineF(c *IconCursor, attrs []xml.Attr) error {
+func drawPolyline(c *IconCursor, attrs []xml.Attr) error {
 	var err error
 	for _, attr := range attrs {
 		switch attr.Name.Local {
@@ -207,15 +208,15 @@ func polylineF(c *IconCursor, attrs []xml.Attr) error {
 	return nil
 }
 
-func polygonF(c *IconCursor, attrs []xml.Attr) error {
-	err := polylineF(c, attrs)
+func drawPolygon(c *IconCursor, attrs []xml.Attr) error {
+	err := drawPolyline(c, attrs)
 	if len(c.points) > 4 {
 		c.Path.Stop(true)
 	}
 	return err
 }
 
-func pathF(c *IconCursor, attrs []xml.Attr) error {
+func drawPath(c *IconCursor, attrs []xml.Attr) error {
 	var err error
 	for _, attr := range attrs {
 		switch attr.Name.Local {
@@ -229,29 +230,29 @@ func pathF(c *IconCursor, attrs []xml.Attr) error {
 	return nil
 }
 
-func descF(c *IconCursor, attrs []xml.Attr) error {
+func drawDesc(c *IconCursor, attrs []xml.Attr) error {
 	c.inDescText = true
 	c.icon.Descriptions = append(c.icon.Descriptions, "")
 	return nil
 }
 
-func titleF(c *IconCursor, attrs []xml.Attr) error {
+func drawTitle(c *IconCursor, attrs []xml.Attr) error {
 	c.inTitleText = true
 	c.icon.Titles = append(c.icon.Titles, "")
 	return nil
 }
 
-func defsF(c *IconCursor, attrs []xml.Attr) error {
+func drawDefs(c *IconCursor, attrs []xml.Attr) error {
 	c.inDefs = true
 	return nil
 }
 
-func styleF(c *IconCursor, attrs []xml.Attr) error {
+func drawStyle(c *IconCursor, attrs []xml.Attr) error {
 	c.inDefsStyle = true
 	return nil
 }
 
-func linearGradientF(c *IconCursor, attrs []xml.Attr) error {
+func drawLinearGradient(c *IconCursor, attrs []xml.Attr) error {
 	var err error
 	c.inGrad = true
 	c.grad = &rasterx.Gradient{
@@ -285,7 +286,7 @@ func linearGradientF(c *IconCursor, attrs []xml.Attr) error {
 	return nil
 }
 
-func radialGradientF(c *IconCursor, attrs []xml.Attr) error {
+func drawRadialGradient(c *IconCursor, attrs []xml.Attr) error {
 	c.inGrad = true
 	c.grad = &rasterx.Gradient{
 		Points:   [5]float64{0.5, 0.5, 0.5, 0.5, 0.5},
@@ -330,7 +331,7 @@ func radialGradientF(c *IconCursor, attrs []xml.Attr) error {
 	return nil
 }
 
-func stopF(c *IconCursor, attrs []xml.Attr) error {
+func drawStop(c *IconCursor, attrs []xml.Attr) error {
 	var err error
 	if c.inGrad {
 		stop := rasterx.GradStop{Opacity: 1.0}
@@ -353,7 +354,7 @@ func stopF(c *IconCursor, attrs []xml.Attr) error {
 	return nil
 }
 
-func useF(c *IconCursor, attrs []xml.Attr) error {
+func drawUse(c *IconCursor, attrs []xml.Attr) error {
 	var (
 		href string
 		x, y float64
@@ -393,19 +394,17 @@ func useF(c *IconCursor, attrs []xml.Attr) error {
 		if err = c.PushStyle(def.Attrs); err != nil {
 			return err
 		}
-		df := getDrawFunc(def.Tag)
-		if df == nil {
-			errStr := "Cannot process svg element " + def.Tag
+
+		err = draw(def.Tag, c, def.Attrs)
+		if err != nil {
 			if c.ErrorMode == StrictErrorMode {
-				return errors.New(errStr)
+				return err
 			} else if c.ErrorMode == WarnErrorMode {
-				log.Println(errStr)
+				log.Println(err)
 			}
 			return nil
 		}
-		if err := df(c, def.Attrs); err != nil {
-			return err
-		}
+
 		// Did c.Path get added to during the drawFunction call iteration?
 		if len(c.Path) > 0 {
 			// The cursor parsed a path from the xml element
