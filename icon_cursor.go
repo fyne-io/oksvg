@@ -343,8 +343,10 @@ func (c *IconCursor) readStartElement(se xml.StartElement) (err error) {
 	}
 	err = draw(se.Name.Local, c, se.Attr)
 	if err != nil {
-		if c.returnError(err.Error()) {
+		if c.ErrorMode == StrictErrorMode {
 			return err
+		} else if c.ErrorMode == WarnErrorMode {
+			log.Println(err)
 		}
 		return nil
 	}
@@ -367,15 +369,4 @@ func (c *IconCursor) adaptClasses(pathStyle *PathStyle, className string) {
 	for k, v := range c.icon.classes[className] {
 		c.readStyleAttr(pathStyle, k, v)
 	}
-}
-
-func (c *IconCursor) returnError(errMsg string) bool {
-	if c.ErrorMode == StrictErrorMode {
-		return true
-	}
-	if c.ErrorMode == WarnErrorMode {
-		log.Println(errMsg)
-	}
-
-	return false
 }
