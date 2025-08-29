@@ -25,11 +25,12 @@ func BenchmarkLandscapeIcons(b *testing.B) {
 	var (
 		beachIconNames = []string{
 			"beach", "cape", "iceberg", "island",
-			"mountains", "sea", "trees", "village"}
+			"mountains", "sea", "trees", "village",
+		}
 		beachIcons = ReadIconSet("testdata/landscapeIcons/", beachIconNames)
 		w, h       = int(beachIcons[0].ViewBox.W), int(beachIcons[0].ViewBox.H)
 		img        = image.NewRGBA(image.Rect(0, 0, w, h))
-		//source     = image.NewUniform(color.NRGBA{0, 0, 0, 255})
+		// source     = image.NewUniform(color.NRGBA{0, 0, 0, 255})
 		scannerGV = NewScannerGV(w, h, img, img.Bounds())
 		raster    = NewDasher(w, h, scannerGV)
 
@@ -62,7 +63,8 @@ func BenchmarkSportsIcons(b *testing.B) {
 			"cycling_road", "olympic_torch", "volleyball",
 			"cycling_track", "water_polo",
 			"diving", "rhythmic_gymnastics", "weightlifting",
-			"equestrian", "rowing", "wrestling"}
+			"equestrian", "rowing", "wrestling",
+		}
 		sportsIcons = ReadIconSet("testdata/sportsIcons/", sportsIconNames)
 		w2, h2      = int(sportsIcons[0].ViewBox.W), int(sportsIcons[0].ViewBox.H)
 		img2        = image.NewRGBA(image.Rect(0, 0, w2, h2))
