@@ -110,9 +110,7 @@ func ReadIconStream(stream io.Reader, errMode ...ErrorMode) (*SvgIcon, error) {
 // ReadReplacingCurrentColor replaces currentColor value with specified value and loads SvgIcon as ReadIconStream do.
 // currentColor value should be valid hex, rgb or named color value.
 func ReadReplacingCurrentColor(stream io.Reader, currentColor string, errMode ...ErrorMode) (icon *SvgIcon, err error) {
-	var (
-		data []byte
-	)
+	var data []byte
 
 	if data, err = io.ReadAll(stream); err != nil {
 		return nil, fmt.Errorf("%w: read data: %v", errParamMismatch, err)
@@ -154,8 +152,10 @@ func ParseSVGColorNum(colorStr string) (r, g, b uint8, err error) {
 			return
 		}
 		// SVG specs say duplicate characters in case of 3 digit hex number
-		colorStr = string([]byte{colorStr[0], colorStr[0],
-			colorStr[1], colorStr[1], colorStr[2], colorStr[2]})
+		colorStr = string([]byte{
+			colorStr[0], colorStr[0],
+			colorStr[1], colorStr[1], colorStr[2], colorStr[2],
+		})
 	}
 	for _, v := range []struct {
 		c *uint8
@@ -163,7 +163,8 @@ func ParseSVGColorNum(colorStr string) (r, g, b uint8, err error) {
 	}{
 		{&r, colorStr[0:2]},
 		{&g, colorStr[2:4]},
-		{&b, colorStr[4:6]}} {
+		{&b, colorStr[4:6]},
+	} {
 		t, err = strconv.ParseUint(v.s, 16, 8)
 		if err != nil {
 			return

@@ -154,7 +154,8 @@ func (c *IconCursor) readTransformAttr(m1 rasterx.Matrix2D, k string) (rasterx.M
 				C: c.points[2],
 				D: c.points[3],
 				E: c.points[4],
-				F: c.points[5]})
+				F: c.points[5],
+			})
 		} else {
 			return m1, errParamMismatch
 		}
@@ -360,7 +361,7 @@ func (c *IconCursor) readStartElement(se xml.StartElement) (err error) {
 	}
 
 	if len(c.Path) > 0 {
-		//The cursor parsed a path from the xml element
+		// The cursor parsed a path from the xml element
 		pathCopy := make(rasterx.Path, len(c.Path))
 		copy(pathCopy, c.Path)
 		c.icon.SVGPaths = append(c.icon.SVGPaths,

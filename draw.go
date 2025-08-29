@@ -26,7 +26,7 @@ var (
 		"stop":           stopF,
 		"rect":           rectF,
 		"circle":         circleF,
-		"ellipse":        circleF, //circleF handles ellipse also
+		"ellipse":        circleF, // circleF handles ellipse also
 		"polyline":       polylineF,
 		"polygon":        polygonF,
 		"path":           pathF,
@@ -149,10 +149,12 @@ var (
 		}
 		c.Path.Start(fixed.Point26_6{
 			X: fixed.Int26_6((x1) * 64),
-			Y: fixed.Int26_6((y1) * 64)})
+			Y: fixed.Int26_6((y1) * 64),
+		})
 		c.Path.Line(fixed.Point26_6{
 			X: fixed.Int26_6((x2) * 64),
-			Y: fixed.Int26_6((y2) * 64)})
+			Y: fixed.Int26_6((y2) * 64),
+		})
 		return nil
 	}
 	polylineF svgFunc = func(c *IconCursor, attrs []xml.Attr) error {
@@ -172,11 +174,13 @@ var (
 		if len(c.points) > 4 {
 			c.Path.Start(fixed.Point26_6{
 				X: fixed.Int26_6((c.points[0]) * 64),
-				Y: fixed.Int26_6((c.points[1]) * 64)})
+				Y: fixed.Int26_6((c.points[1]) * 64),
+			})
 			for i := 2; i < len(c.points)-1; i += 2 {
 				c.Path.Line(fixed.Point26_6{
 					X: fixed.Int26_6((c.points[i]) * 64),
-					Y: fixed.Int26_6((c.points[i+1]) * 64)})
+					Y: fixed.Int26_6((c.points[i+1]) * 64),
+				})
 			}
 		}
 		return nil
@@ -222,8 +226,10 @@ var (
 	linearGradientF svgFunc = func(c *IconCursor, attrs []xml.Attr) error {
 		var err error
 		c.inGrad = true
-		c.grad = &rasterx.Gradient{Points: [5]float64{0, 0, 1, 0, 0},
-			IsRadial: false, Bounds: c.icon.ViewBox, Matrix: rasterx.Identity}
+		c.grad = &rasterx.Gradient{
+			Points:   [5]float64{0, 0, 1, 0, 0},
+			IsRadial: false, Bounds: c.icon.ViewBox, Matrix: rasterx.Identity,
+		}
 		for _, attr := range attrs {
 			switch attr.Name.Local {
 			case "id":
@@ -252,8 +258,10 @@ var (
 	}
 	radialGradientF svgFunc = func(c *IconCursor, attrs []xml.Attr) error {
 		c.inGrad = true
-		c.grad = &rasterx.Gradient{Points: [5]float64{0.5, 0.5, 0.5, 0.5, 0.5},
-			IsRadial: true, Bounds: c.icon.ViewBox, Matrix: rasterx.Identity}
+		c.grad = &rasterx.Gradient{
+			Points:   [5]float64{0.5, 0.5, 0.5, 0.5, 0.5},
+			IsRadial: true, Bounds: c.icon.ViewBox, Matrix: rasterx.Identity,
+		}
 		var setFx, setFy bool
 		var err error
 		for _, attr := range attrs {
@@ -301,7 +309,7 @@ var (
 				case "offset":
 					stop.Offset, err = readFraction(attr.Value)
 				case "stop-color":
-					//todo: add current color inherit
+					// todo: add current color inherit
 					stop.StopColor, err = ParseSVGColor(attr.Value)
 				case "stop-opacity":
 					stop.Opacity, err = parseFloat(attr.Value, 64)
@@ -334,8 +342,7 @@ var (
 			}
 		}
 		// Translate the Style adder matrix by use's x and y
-		c.StyleStack[len(c.StyleStack)-1].mAdder.M =
-			c.StyleStack[len(c.StyleStack)-1].mAdder.M.Translate(x, y)
+		c.StyleStack[len(c.StyleStack)-1].mAdder.M = c.StyleStack[len(c.StyleStack)-1].mAdder.M.Translate(x, y)
 		if href == "" {
 			return errors.New("only use tags with href is supported")
 		}
@@ -368,9 +375,9 @@ var (
 			if err := df(c, def.Attrs); err != nil {
 				return err
 			}
-			//Did c.Path get added to during the drawFunction call iteration?
+			// Did c.Path get added to during the drawFunction call iteration?
 			if len(c.Path) > 0 {
-				//The cursor parsed a path from the xml element
+				// The cursor parsed a path from the xml element
 				pathCopy := make(rasterx.Path, len(c.Path))
 				copy(pathCopy, c.Path)
 				c.icon.SVGPaths = append(c.icon.SVGPaths, SvgPath{c.StyleStack[len(c.StyleStack)-1], pathCopy})

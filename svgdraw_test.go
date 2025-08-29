@@ -7,9 +7,8 @@ import (
 	"fmt"
 	"image"
 	"image/color"
-	"os"
-
 	"image/png"
+	"os"
 	"strings"
 	"testing"
 
@@ -37,20 +36,22 @@ const testArcoS = `M150,350 l 50,-55
            a25,100 -30 0,1 50,-25 l 50,15,0,25,-15,-15  z`
 
 // Explicitly call each command in abs and rel mode and concatenated forms
-const testSVG0 = `m20,20,0,400,400,0z`
-const testSVG1 = `M20,20 L500,800 L800,200z`
-const testSVG2 = `M20,20 Q200,800 800,800z`
-const testSVG3 = `M20,50 C200,200 800,200 800,500z`
-const testSVG4 = `M20,50 S200,1400 400,500 S700,800 800,400z`
-const testSVG5 = `M50,20 Q 800,500 500,800z`
-const testSVG6 = `M20,50 c200,200 800,200 400,300z`
-const testSVG7 = `M20,20 c0,500 500,0 500,500z`
-const testSVG8 = `M20,50 c200,200 800,200 400,300c200,200 800,200 400,300z`
-const testSVG9 = `M20,50 c200,200 800,200 400,300,200,200 800,200 400,300z`
-const testSVG10 = `M20,50 c200,200 800,200 400,300,200,200 800,200 400,300s500,300 200,200s600,300 200,200z`
-const testSVG11 = `M20,50 c200,200 800,200 400,300,200,200 800,200 400,300s500,300 200,200,600,300 200,200z`
-const testSVG12 = `M100,100 Q400,100 250,250 T400,400z`
-const testSVG13 = `M100,100 Q400,100 250,250 t150,150,150,150z`
+const (
+	testSVG0  = `m20,20,0,400,400,0z`
+	testSVG1  = `M20,20 L500,800 L800,200z`
+	testSVG2  = `M20,20 Q200,800 800,800z`
+	testSVG3  = `M20,50 C200,200 800,200 800,500z`
+	testSVG4  = `M20,50 S200,1400 400,500 S700,800 800,400z`
+	testSVG5  = `M50,20 Q 800,500 500,800z`
+	testSVG6  = `M20,50 c200,200 800,200 400,300z`
+	testSVG7  = `M20,20 c0,500 500,0 500,500z`
+	testSVG8  = `M20,50 c200,200 800,200 400,300c200,200 800,200 400,300z`
+	testSVG9  = `M20,50 c200,200 800,200 400,300,200,200 800,200 400,300z`
+	testSVG10 = `M20,50 c200,200 800,200 400,300,200,200 800,200 400,300s500,300 200,200s600,300 200,200z`
+	testSVG11 = `M20,50 c200,200 800,200 400,300,200,200 800,200 400,300s500,300 200,200,600,300 200,200z`
+	testSVG12 = `M100,100 Q400,100 250,250 T400,400z`
+	testSVG13 = `M100,100 Q400,100 250,250 t150,150,150,150z`
+)
 
 func TestTransform(t *testing.T) {
 	icon, errSvg := ReadIcon("testdata/landscapeIcons/sea.svg", WarnErrorMode)
@@ -89,8 +90,8 @@ func DrawIcon(t *testing.T, iconPath string) image.Image {
 	//	painter := scanFT.NewRGBAPainter(img)
 	//	scannerFT := scanFT.NewScannerFT(w, h, painter)
 	//	raster := NewDasher(w, h, scannerFT)
-	//tb := img.Bounds()
-	//tb.Max.X /= 2
+	// tb := img.Bounds()
+	// tb.Max.X /= 2
 	scannerGV := NewScannerGV(w, h, img, img.Bounds())
 	raster := NewDasher(w, h, scannerGV)
 	icon.Draw(raster, 1.0)
@@ -130,7 +131,8 @@ func SaveToPngFile(filePath string, m image.Image) error {
 }
 
 func TestSvgPathsStroke(t *testing.T) {
-	for i, p := range []string{testArco, testArco2, testArcoS,
+	for i, p := range []string{
+		testArco, testArco2, testArcoS,
 		testSVG0, testSVG1, testSVG2, testSVG3, testSVG4, testSVG5,
 		testSVG6, testSVG7, testSVG8, testSVG9, testSVG10,
 		testSVG11, testSVG12, testSVG13,
@@ -167,7 +169,8 @@ func TestSvgPathsStroke(t *testing.T) {
 func TestLandscapeIcons(t *testing.T) {
 	for _, p := range []string{
 		"beach", "cape", "iceberg", "island",
-		"mountains", "sea", "trees", "village"} {
+		"mountains", "sea", "trees", "village",
+	} {
 		SaveIcon(t, "testdata/landscapeIcons/"+p+".svg")
 	}
 }
@@ -175,7 +178,8 @@ func TestLandscapeIcons(t *testing.T) {
 func TestTestIcons(t *testing.T) {
 	for _, p := range []string{
 		"astronaut", "jupiter", "lander", "school-bus", "telescope", "content-cut-light", "defs",
-		"24px", "badelement"} {
+		"24px", "badelement",
+	} {
 		SaveIcon(t, "testdata/testIcons/"+p+".svg")
 	}
 }
@@ -225,7 +229,6 @@ func TestClassesIcon(t *testing.T) {
 	if errSvg == nil {
 		t.Error("failed to catch attribute format error")
 	}
-
 }
 
 func TestHSL(t *testing.T) {
