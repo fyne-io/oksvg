@@ -319,10 +319,7 @@ func (c *IconCursor) readStyleAttr(curStyle *PathStyle, k, v string) error {
 }
 
 func (c *IconCursor) readStartElement(se xml.StartElement) (err error) {
-	var skipDef bool
-	if se.Name.Local == "radialGradient" || se.Name.Local == "linearGradient" || c.inGrad {
-		skipDef = true
-	}
+	skipDef := se.Name.Local == "radialGradient" || se.Name.Local == "linearGradient" || c.inGrad
 	if c.inDefs && !skipDef {
 		ID := ""
 		for _, attr := range se.Attr {
@@ -332,7 +329,6 @@ func (c *IconCursor) readStartElement(se xml.StartElement) (err error) {
 		}
 		if ID != "" && len(c.currentDef) > 0 {
 			c.icon.Defs[c.currentDef[0].ID] = c.currentDef
-			c.currentDef = make([]definition, 0)
 		}
 		c.currentDef = append(c.currentDef, definition{
 			ID:    ID,

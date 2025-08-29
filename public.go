@@ -77,7 +77,6 @@ func ReadIconStream(stream io.Reader, errMode ...ErrorMode) (*SvgIcon, error) {
 			case "defs":
 				if len(cursor.currentDef) > 0 {
 					cursor.icon.Defs[cursor.currentDef[0].ID] = cursor.currentDef
-					cursor.currentDef = make([]definition, 0)
 				}
 				cursor.inDefs = false
 			case "radialGradient", "linearGradient":
