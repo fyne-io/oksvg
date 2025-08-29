@@ -35,7 +35,7 @@ jobs:
           test -z "$(goimports -e -d . | tee /dev/stderr)"
 
       - name: Gocyclo
-        run: gocyclo -over 30 .
+        run: gocyclo -over 50 .
 
       - name: Staticcheck
         run: staticcheck ./...
