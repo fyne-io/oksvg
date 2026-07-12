@@ -7,6 +7,11 @@ func TestSetTarget(t *testing.T) {
 		X, Y, W, H float64
 	}
 
+	// SetTarget only computes a matrix to transform (scale and/or translate) the
+	// points from ViewBox to a given target. This test passes multiple pairs of
+	// (ViewBox => Target) to SetTarget and verifies that the resulting matrix is
+	// correct in a simple way: we check that applying the matrix to each corner
+	// of ViewBox gives us back every corresponding corner of Target.
 	tests := []struct {
 		ViewBox Box
 		Target  Box
